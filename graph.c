@@ -24,6 +24,10 @@ insert_link_between_two_nodes(node_t *node1,
     link->intf1.att_node = node1;
     link->intf2.att_node = node2;
 
+    // initialize interface network properties
+    init_intf_nw_prop(&link->intf1.intf_nw_props);
+    init_intf_nw_prop(&link->intf2.intf_nw_props);
+
     // set cost
     link->cost = cost;
 
@@ -33,7 +37,7 @@ insert_link_between_two_nodes(node_t *node1,
 
     empty_intf_slot = get_node_intf_available_slot(node2);
     node2->intf[empty_intf_slot] = &link->intf2;
-    
+
 }
 
 
@@ -56,6 +60,9 @@ create_graph_node(graph_t *graph, char *node_name) {
 
     init_glthread(&node->graph_glue);
     glthread_add_next(&graph->node_list, &node->graph_glue);
+
+    init_node_nw_prop(&node->node_nw_prop);
+
     return node;
 } 
 
