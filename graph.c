@@ -28,6 +28,10 @@ insert_link_between_two_nodes(node_t *node1,
     init_intf_nw_prop(&link->intf1.intf_nw_props);
     init_intf_nw_prop(&link->intf2.intf_nw_props);
 
+    // assign random generated mac address to interface
+    interface_assign_mac_address(&link->intf1);
+    interface_assign_mac_address(&link->intf2);
+
     // set cost
     link->cost = cost;
 
@@ -77,7 +81,7 @@ void dump_graph(graph_t *graph){
     ITERATE_GLTHREAD_BEGIN(&graph->node_list, curr){
 
         node = graph_glue_to_node(curr);
-        dump_node(node);    
+        dump_node(node);
     } ITERATE_GLTHREAD_END(&graph->node_list, curr);
 }
 

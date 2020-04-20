@@ -92,7 +92,7 @@ get_node_if_by_name(node_t *node, char *if_name) {
         intf = node->intf[i];
         if(!intf) return NULL;
         if(strncmp(intf->if_name, if_name, IF_NAME_SIZE)) {
-            return intf
+            return intf;
         }
     }
 
