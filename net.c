@@ -1,6 +1,8 @@
 #include "graph.h"
 #include "net.h"
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
 
 // Just some Random number generator
 static unsigned int
@@ -61,6 +63,66 @@ interface_assign_mac_address(interface_t *interface) {
     memcpy(IF_MAC(interface), (char *)&hash_code_val, sizeof(unsigned int));
 }
 
+interface_t *node_get_matching_subnet_interface(node_t *node, char *ip_addr) {
+    interface_t *cur_intf;
+    unsigned int i = 0;
+    char local_nw_id[IF_NAME_SIZE];
+    char remote_nw_id[IF_NAME_SIZE];
+    char mask;
+    for(; i < MAX_INTF_PER_NODE; i++) {
+        cur_intf = node->intf[i];
+        mask = cur_intf->intf_nw_props.mask;
+        if(!cur_intf) break;
+
+        // apply mask on current interfsce IP address
+        apply_mask(IF_IP(cur_intf), mask, local_nw_id);
+        // apply mask on a given IP address
+        apply_mask(ip_addr, mask, remote_nw_id);
+        if (strcmp(local_nw_id, remote_nw_id) == 0) {
+            return cur_intf;
+        }
+    }
+    return NULL;
+}
+
+unsigned int convert_ip_from_str_to_int(char *ip_addr) {
+    char *token;
+    char *bits;
+    unsigned int i;
+    unsigned int ip_number;
+    const char dot[2] = "-";
+    
+    for(i = 0, token = ip_addr; i <= 3; i++, token = NULL) {
+        bits = strtok(token, dot);
+        if (!bits) break;
+
+        *bits *= (unsigned int) pow(256, 3 - i);
+        ip_number += *bits;
+    }
+
+    return ip_number;
+}
+
+void convert_ip_from_int_to_str(unsigned int ip_addr, char *output_buffer) {
+    unsigned int i;
+    unsigned int num;
+    char str[4];
+    char buffer[16]; // "xxx.xxx.xxx.xxx" + "\0" requires 16 bytes
+
+    for (i = 0; i < 4; i++) {
+        num = (int) (ip_addr / (unsigned int) pow(256, 3 - i));
+        // convert num to string form and store the string in str
+        sprintf(str, "%d", num);
+        ip_addr -= num;
+        strcat(buffer, str);
+        if (i == 0) {
+            strcpy(output_buffer, buffer);    
+            break;
+        }
+    }
+}
+
+
 void dump_nw_graph(graph_t *graph) {
 
     node_t *node;
@@ -107,10 +169,5 @@ void dump_intf_props(interface_t *interface) {
         IF_MAC(interface)[2], IF_MAC(interface)[3],
         IF_MAC(interface)[4], IF_MAC(interface)[5]);
 }
-
-
-
-
-
 
 
