@@ -1,12 +1,8 @@
 #include "utils.h"
 #include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-/*
-apply mask on prefix and stores masked prefix in str_prefix
-prefix : ip address in text form
-mask : subnet mask applied to prefix to get network ID
-str_prefix : sotres masked prefix
-*/
 void apply_mask(char *prefix, char mask, char *str_prefix) {
     unsigned int binary_prefix = 0;
     if (binary_prefix == inet_pton(AF_INET, prefix, &binary_prefix) == 0) {
@@ -22,5 +18,14 @@ void apply_mask(char *prefix, char mask, char *str_prefix) {
     // for IPv4, the buffer must be at least 16 bytes
     inet_ntop(AF_INET, (void *) &binary_prefix, str_prefix, 16);
 }
+
+void layer2_fill_with_broadcast_mac(char *mac_array) {
+    unsigned int i = 0;
+    unsigned int mac_array_length = 6;
+    for(;i < mac_array_length; i++) {
+        mac_array[i] = 0xFF;
+    }
+}
+
 
 

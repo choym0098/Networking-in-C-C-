@@ -11,9 +11,8 @@ typedef enum{
 /*
 apply mask on prefix and store result in str_prefix
 prefix      : a pointer to IP address string
-make        : any value [0 - 32]
-str_prefix  : pointer to char aarray of size 16 bytes. +
-              It's filled with the output as the result of the funciton
+make        : subnet mask - any integer [0 - 32]
+str_prefix  : stores masked prefix
 */
 void
 apply_mask(char *prefix, char mask, char *str_prefix);
@@ -28,7 +27,9 @@ layer2_fill_with_broadcast_mac(char *mac_array);
 /*
 evaluate to true if the mac address is BROADCAST mac address, otherwise FALSE.
 */
-#define IS_MAC_BROADCAST_ADDR(mac)
+#define IS_MAC_BROADCAST_ADDR(mac) \
+    (mac[0] == 0xFF && mac[1] == 0xFF && mac[2] == 0xFF && \
+     mac[3] == 0xFF && mac[4] == 0xFF && mac[5] == 0xFF && )
 
 
 
